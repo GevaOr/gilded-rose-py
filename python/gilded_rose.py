@@ -23,7 +23,7 @@ class GildedRose(object):
                     if item.name != self.SULFURAS:
                         item.quality -= 1
                     if item.name.startswith(self.CONJURED_PREFIX):
-                        item.quality -= 2
+                        item.quality -= 1
             else:
                 if item.quality < 50:
                     item.quality = item.quality + 1
