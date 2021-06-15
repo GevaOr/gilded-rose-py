@@ -69,7 +69,6 @@ class GildedRose(object):
                 elif not self._is_item_max_quality(item):
                     quality_decrease_amount = -1
                     if item.name == self.BACKSTAGE_PASSES:
-                        print("BOOM")
                         self._update_backstage_pass_decrease(
                             item)
                         quality_decrease_amount = 0
