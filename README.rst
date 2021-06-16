@@ -1,3 +1,18 @@
+The General Steps I Took & What I Learned
+=========================================
+
+I initially read through the existing code and the requirements, and made sure I understand how everything works.
+I decided to add the additional feature ("Conjured" items) to the existing code before I start refactoring.
+
+The first step I decided to do after that is to remove some of the hard coded strings ("Aged Brie", "Conjured" prefix...) and set them as global vars.
+After that, I looked for repeating operations that I can separate to private class methods (see "_is_item_expired", "_is_item_max_quality"...).
+
+I then started to refactor the code - I tried doing it bit by bit but I ended up biting more than I can chew...
+I eventually got the code to work again, but I believe that there is more cleaning to be done.
+
+I think that my strategy worked well up until the part where I started refactoring the actual logic - I should have separated the code to smaller chuncks and worked through that.
+
+
 Gilded Rose Requirements Specification
 ======================================
 
