@@ -8,7 +8,7 @@ class GildedRose(object):
     SPECIAL_CASES = [
         AGED_BRIE,
         BACKSTAGE_PASSES,
-        SULFURAS,
+        # SULFURAS,
     ]
 
     CONJURED_PREFIX = "Conjured"
@@ -19,16 +19,11 @@ class GildedRose(object):
     def _decrease_item_quality_by(self, item, decrease_by):
         outcome = item.quality - decrease_by
         if outcome >= 0:
+            if outcome > 50:
+                outcome = 50
             item.quality = outcome
             return
         item.quality = 0
-
-    # def _increase_item_quality_by(self, item, increase_by):
-    #     outcome = item.quality + increase_by
-    #     if outcome <= 50:
-    #         item.quality = outcome
-    #         return
-    #     item.quality = 50
 
     def _decrease_item_sell_in_by(self, item, decrease_by):
         item.sell_in -= decrease_by
@@ -44,36 +39,39 @@ class GildedRose(object):
     def _is_item_max_quality(self, item):
         return item.quality >= 50
 
-    def _update_backstage_pass_decrease(self, item):
+    def _updated_backstage_pass_decrease(self, item, current_decrease_amount):
         if item.sell_in < 0:
-            item.quality = 0
-            return
-        quality_increase = 1
-        if item.sell_in <= 10:
-            quality_increase += 1
-        if item.sell_in < 6:
-            quality_increase += 1
-        item.quality += quality_increase
+            current_decrease_amount = item.quality
+            return current_decrease_amount
+        if item.sell_in < 10:
+            current_decrease_amount -= 1
+        if item.sell_in < 5:
+            current_decrease_amount -= 1
+        return current_decrease_amount
 
     def update_quality(self):
         for item in self.items:
             time_passed = 1
             quality_decrease_amount = 1
+            if item.name == self.SULFURAS:
+                time_passed = 0
+                quality_decrease_amount = 0
+            self._decrease_item_sell_in_by(item, time_passed)
             if self._is_item_special_case(item):
-                if item.name == self.SULFURAS:
-                    time_passed = 0
-                    quality_decrease_amount = 0
-                self._decrease_item_sell_in_by(item, time_passed)
                 if item.name.startswith(self.CONJURED_PREFIX):
                     quality_decrease_amount *= 2
+
                 elif not self._is_item_max_quality(item):
                     quality_decrease_amount = -1
                     if item.name == self.BACKSTAGE_PASSES:
-                        self._update_backstage_pass_decrease(
-                            item)
-                        quality_decrease_amount = 0
+                        quality_decrease_amount = self._updated_backstage_pass_decrease(
+                            item, quality_decrease_amount)
                 else:
                     quality_decrease_amount = 0
+                    if item.name == self.BACKSTAGE_PASSES:
+                        quality_decrease_amount = self._updated_backstage_pass_decrease(
+                            item, quality_decrease_amount)
+
             if self._is_item_expired(item):
                 quality_decrease_amount *= 2
 
